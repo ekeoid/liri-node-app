@@ -1,0 +1,30 @@
+{ tracks:
+   { href:
+      'https://api.spotify.com/v1/search?query=The+Final+Countdown&type=track&offset=0&limit=20',
+     items:
+      [ [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object] ],
+     limit: 20,
+     next:
+      'https://api.spotify.com/v1/search?query=The+Final+Countdown&type=track&offset=20&limit=20',
+     offset: 0,
+     previous: null,
+     total: 1119 } }
