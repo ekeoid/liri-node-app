@@ -25,17 +25,19 @@ function querySpotify(string) {
         })
         .then(function (response) {
             // console.log(response);
-            let artist = response.tracks.items[0].artists[0].name;
-            let song = response.tracks.items[0].name;
-            let preview = response.tracks.items[0].preview_url;
-            let album = response.tracks.items[0].album.name;
+            let track = {
+                artist: response.tracks.items[0].artists[0].name,
+                song: response.tracks.items[0].name,
+                preview: response.tracks.items[0].preview_url,
+                album: response.tracks.items[0].album.name
+            }
 
-            console.log("\n---------------------------------------------------\n");
-            console.log("Artist: " + artist);
-            console.log("Song: " + song);
-            console.log("Preview: " + preview);
-            console.log("Album: " + album);
-            console.log("\n---------------------------------------------------\n");
+            console.log("-".repeat(70));
+            printFormat("Artist", track.artist);
+            printFormat("Song ", track.song);
+            printFormat("Preview ", track.preview);
+            printFormat("Album ", track.album);
+            console.log("-".repeat(70));
         })
         .catch(function (error) {
             console.log("Error occurred: " + error);
@@ -62,14 +64,16 @@ function queryOMDB(string) {
                 actors: response.data.Actors
             }
 
-            console.log (movie.title);
-            console.log (movie.year);
-            console.log (movie.imdbRating);
-            console.log (movie.rtRating);
-            console.log (movie.country);
-            console.log (movie.language);
-            console.log (movie.plot);
-            console.log (movie.actors);
+            console.log("-".repeat(70));
+            printFormat("Movie Name", movie.title);
+            printFormat("Release Year", movie.year);
+            printFormat("IMDB Rating", movie.imdbRating);
+            printFormat("Rotten Tomatoes Rating", movie.rtRating);
+            printFormat("Country", movie.country);
+            printFormat("Language(s)", movie.language);
+            printFormat("Plot", movie.plot);
+            printFormat("Actors", movie.actors);
+            console.log("-".repeat(70));
 
         });
 }
@@ -80,15 +84,68 @@ function queryBIT(string) {
 
     axios.get(queryURL).then(
         function (response) {
-            let name = response.data[0].venue.name;
-            let location = response.data[0].venue.city; // .region .country
-            console.log(response.data[0].datetime);
+            let venue = {
+                name: response.data[0].venue.name,
+                location: response.data[0].venue.city + ", " + 
+                          response.data[0].venue.region + ", " +
+                          response.data[0].venue.country,
+                date: response.data[0].datetime
+            }
+              
+            console.log("-".repeat(70));
+            printFormat("Venue Name", venue.name);
+            printFormat("Location", venue.location);
+            printFormat("Date of Event", venue.date);
+            console.log("-".repeat(70));            
         });
 }
 
+function printFormat(message, data) {
+    var string = "";
+    
+    string += " ".repeat(2);
+    string += message + " ".repeat(27 - message.length);
+
+    if (data.length > 40) {
+        var words = data.split(" ");
+        var count = 0;
+        
+        if (words[0].length > 40) {
+            string += data;
+        }
+
+        for (var i=1; i < words.length; i++ ) {
+            string += words[i-1] + " ";
+            count += words[i-1].length;
+            count++;
+
+            if (count + words[i].length > 40) {
+                string += "\n";
+                count = 0;
+                string += " ".repeat(29);
+            }
+            
+            if (i == words.length-1) {
+                if (count + words[i].length > 40) {
+                    string += "\n";
+                    string += " ".repeat(29);
+                }
+                string += words[i];
+            }
+        }
+
+    } else {
+        string += data;
+    }
+    
+    console.log (string);
+}
+
+
 //querySpotify();
-queryOMDB();
-//queryBIT();
+//queryOMDB();
+queryBIT();
+
 
 var command = process.argv[2];
 var instruction = process.argv[3];
