@@ -7,6 +7,8 @@ var spotify = new Spotify(keys.spotify);
 
 var axios = require("axios");
 
+var 
+
 
 function querySpotify(string) {
     var trackName;
