@@ -44,36 +44,51 @@ function querySpotify(string) {
 }
 
 function queryOMDB(string) {
+    // default is MR Nobody
     var movieName = "The Lion King";
+    var queryURL = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
 
-    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
-
-    axios.get(queryUrl).then(
+    axios.get(queryURL).then(
         function (response) {
-            let title = response.data.Title;
-            let year = response.data.Year;
-            let imdbRating = response.data.imdbRating;
-            let rtRating = response.data.Ratings[1].Value;
-            let country = response.data.Country;
-            let language = response.data.Language;
-            let plot = response.data.Plot;
-            let actors = response.data.Actors;
-
             //console.log(response.data);
-            console.log (title);
-            console.log (year);
-            console.log (imdbRating);
-            console.log (rtRating);
-            console.log (country);
-            console.log (language);
-            console.log (plot);
-            console.log (actors);
+            let movie = {
+                title: response.data.Title,
+                year: response.data.Year,
+                imdbRating: response.data.imdbRating,
+                rtRating: response.data.Ratings[1].Value,
+                country: response.data.Country,
+                language: response.data.Language,
+                plot: response.data.Plot,
+                actors: response.data.Actors
+            }
 
+            console.log (movie.title);
+            console.log (movie.year);
+            console.log (movie.imdbRating);
+            console.log (movie.rtRating);
+            console.log (movie.country);
+            console.log (movie.language);
+            console.log (movie.plot);
+            console.log (movie.actors);
+
+        });
+}
+
+function queryBIT(string) {
+    var artistName = "Imagine Dragons";
+    var queryURL = "https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp";
+
+    axios.get(queryURL).then(
+        function (response) {
+            let name = response.data[0].venue.name;
+            let location = response.data[0].venue.city; // .region .country
+            console.log(response.data[0].datetime);
         });
 }
 
 //querySpotify();
 queryOMDB();
+//queryBIT();
 
 var command = process.argv[2];
 var instruction = process.argv[3];

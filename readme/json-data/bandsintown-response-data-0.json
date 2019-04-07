@@ -1,0 +1,20 @@
+{ offers:
+   [ { type: 'Tickets',
+       url:
+        'https://www.bandsintown.com/t/100666236?app_id=codingbootcamp&came_from=267&utm_medium=api&utm_source=public_api&utm_campaign=ticket',
+       status: 'available' } ],
+  venue:
+   { name: 'BottleRock',
+     country: 'United States',
+     region: 'CA',
+     city: 'Napa',
+     latitude: '38.2975381',
+     longitude: '-122.286865' },
+  datetime: '2019-05-24T19:00:39',
+  on_sale_datetime: '',
+  description: '',
+  lineup: [ 'Imagine Dragons' ],
+  id: '100666236',
+  artist_id: '330488',
+  url:
+   'https://www.bandsintown.com/e/100666236?app_id=codingbootcamp&came_from=267&utm_medium=api&utm_source=public_api&utm_campaign=event' }
