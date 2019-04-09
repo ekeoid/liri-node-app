@@ -7,7 +7,7 @@ var spotify = new Spotify(keys.spotify);
 
 var axios = require("axios");
 
-var 
+
 
 
 function querySpotify(string) {
@@ -144,8 +144,8 @@ function printFormat(message, data) {
 }
 
 
-//querySpotify();
-//queryOMDB();
+querySpotify();
+queryOMDB();
 queryBIT();
 
 
