@@ -7,7 +7,28 @@ var spotify = new Spotify(keys.spotify);
 
 var axios = require("axios");
 
+var fs = require("fs");
 
+var action = process.argv[2];
+var value = process.argv.slice(3).join("+");
+
+switch (action) {
+    case "total":
+        total();
+        break;
+
+    case "deposit":
+        deposit();
+        break;
+
+    case "withdraw":
+        withdraw();
+        break;
+
+    case "lotto":
+        lotto();
+        break;
+}
 
 
 function querySpotify(string) {
