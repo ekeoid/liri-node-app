@@ -7,6 +7,8 @@ var spotify = new Spotify(keys.spotify);
 
 var axios = require("axios");
 
+var moment = require("moment");
+
 var fs = require("fs");
 
 var action = process.argv[2];
@@ -29,6 +31,7 @@ switch (action) {
         lotto();
         break;
 }
+
 
 
 function querySpotify(string) {
@@ -112,7 +115,8 @@ function queryBIT(string) {
                 location: response.data[0].venue.city + ", " + 
                           response.data[0].venue.region + ", " +
                           response.data[0].venue.country,
-                date: response.data[0].datetime
+                //date: response.data[0].datetime
+                date: moment(response.data[0].datetime, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY")
             }
               
             console.log("-".repeat(70));
