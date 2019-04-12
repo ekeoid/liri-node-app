@@ -14,34 +14,61 @@ var fs = require("fs");
 var action = process.argv[2];
 var value = process.argv.slice(3).join("+");
 
-switch (action) {
-    case "total":
-        total();
-        break;
+// console.log(action);
+// console.log(value);
 
-    case "deposit":
-        deposit();
-        break;
+goLIRI (action, value);
 
-    case "withdraw":
-        withdraw();
-        break;
 
-    case "lotto":
-        lotto();
-        break;
+function goLIRI (action, value) {
+    switch (action) {
+        case "concert-this":
+            queryBIT(value);
+            break;
+        
+        case "spotify-this-song":
+            querySpotify(value);
+            break;
+        
+        case "movie-this":
+            queryOMDB(value);
+            break;
+        
+        case "do-what-it-says":
+            readFile("random.txt");
+            break;
+    }
 }
 
+function readFile(filename) {
+    fs.readFile(filename, "utf8", function (err, data) {
+        if (err) {
+            return console.log(err);
+        }
 
+        data = data.split(",");
+      
+        goLIRI(data[0], data[1]);
+    });
+}
+
+function writeFile(filename, output) {
+    fs.appendFile(filename, output, function(err) {
+        if (err) {
+          return console.log(err);
+        }
+
+        console.log(output);
+      });    
+}
 
 function querySpotify(string) {
     var trackName;
-    if (string === undefined) {
+    if (string === undefined || string === "") {
         // if no song, default to "The Sign" by Ace of Base.
-        //trackName = "Ace of Base The Sign";
-        trackName = "The Final Countdown";
+        trackName = "Ace of Base The Sign";        
     } else {
-        trackName = parameter;
+        trackName = string;
     }
 
     spotify
@@ -51,19 +78,35 @@ function querySpotify(string) {
         })
         .then(function (response) {
             // console.log(response);
-            let track = {
-                artist: response.tracks.items[0].artists[0].name,
-                song: response.tracks.items[0].name,
-                preview: response.tracks.items[0].preview_url,
-                album: response.tracks.items[0].album.name
-            }
+            
+            //let results = response.tracks.items.length;
+            let results = 1;
+            let output = "";
+            //console.log(response.tracks.items[0]);
+            if (response.tracks.items.length > 0) {
+                for (let i = 0; i < results; i++) {
 
-            console.log("-".repeat(70));
-            printFormat("Artist", track.artist);
-            printFormat("Song ", track.song);
-            printFormat("Preview ", track.preview);
-            printFormat("Album ", track.album);
-            console.log("-".repeat(70));
+                    let track = {
+                        artist: response.tracks.items[i].artists[0].name,
+                        song: response.tracks.items[i].name,
+                        preview: response.tracks.items[i].preview_url,
+                        album: response.tracks.items[i].album.name
+                    }
+    
+                    output += printFormat("Artist", track.artist) + "\n";
+                    output += printFormat("Song ", track.song) + "\n";
+                    output += printFormat("Preview ", track.preview == null ? "" : track.preview) + "\n";
+                    output += printFormat("Album ", track.album) + "\n";
+                    output += "-".repeat(70) + "\n";
+                }
+                
+                let prepend = "-----  " + action + "  " + "-".repeat(70 - action.length - 9) + "\n";
+                writeFile("log.txt", prepend.concat("", output));
+            } else {
+                console.log ("No Results");
+            }
+            
+            
         })
         .catch(function (error) {
             console.log("Error occurred: " + error);
@@ -72,8 +115,14 @@ function querySpotify(string) {
 }
 
 function queryOMDB(string) {
-    // default is MR Nobody
-    var movieName = "The Lion King";
+    var movieName;
+    if (string === undefined || string === "") {
+        // if no movie, default to "Mr. Nobody"
+        movieName = "Mr.+Nobody";        
+    } else {
+        movieName = string;
+    }
+
     var queryURL = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
 
     axios.get(queryURL).then(
@@ -90,72 +139,96 @@ function queryOMDB(string) {
                 actors: response.data.Actors
             }
 
-            console.log("-".repeat(70));
-            printFormat("Movie Name", movie.title);
-            printFormat("Release Year", movie.year);
-            printFormat("IMDB Rating", movie.imdbRating);
-            printFormat("Rotten Tomatoes Rating", movie.rtRating);
-            printFormat("Country", movie.country);
-            printFormat("Language(s)", movie.language);
-            printFormat("Plot", movie.plot);
-            printFormat("Actors", movie.actors);
-            console.log("-".repeat(70));
+            let output = "";
+
+            output += printFormat("Movie Name", movie.title) + "\n";
+            output += printFormat("Release Year", movie.year) + "\n";
+            output += printFormat("IMDB Rating", movie.imdbRating) + "\n";
+            output += printFormat("Rotten Tomatoes Rating", movie.rtRating) + "\n";
+            output += printFormat("Country", movie.country) + "\n";
+            output += printFormat("Language(s)", movie.language) + "\n";
+            output += printFormat("Plot", movie.plot) + "\n";
+            output += printFormat("Actors", movie.actors) + "\n";
+            output += "-".repeat(70) + "\n";
+
+            let prepend = "-----  " + action + "  " + "-".repeat(70 - action.length - 9) + "\n";
+            writeFile("log.txt", prepend.concat("", output));
 
         });
 }
 
 function queryBIT(string) {
-    var artistName = "Imagine Dragons";
+    var artistName;
+    if (string === undefined || string === "") {
+        artistName = "Imagine+Dragons";       
+    } else {
+        artistName = string;
+    }
+    
     var queryURL = "https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp";
 
     axios.get(queryURL).then(
         function (response) {
-            let venue = {
-                name: response.data[0].venue.name,
-                location: response.data[0].venue.city + ", " + 
-                          response.data[0].venue.region + ", " +
-                          response.data[0].venue.country,
-                //date: response.data[0].datetime
-                date: moment(response.data[0].datetime, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY")
+
+            //let results = response.data.length;
+            let results = 1;
+            let output = "";
+
+            for (let i = 0; i < results; i++) {
+
+                let venue = {
+                    name: response.data[i].venue.name,
+                    location: response.data[i].venue.city + ", " +
+                        response.data[i].venue.region + ", " +
+                        response.data[i].venue.country,
+                    //date: response.data[0].datetime
+                    date: moment(response.data[i].datetime, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY")
+                }
+
+                output += printFormat("Venue Name", venue.name) + "\n";
+                output += printFormat("Location", venue.location) + "\n";
+                output += printFormat("Date of Event", venue.date) + "\n";
+                output += "-".repeat(70) + "\n";
             }
-              
-            console.log("-".repeat(70));
-            printFormat("Venue Name", venue.name);
-            printFormat("Location", venue.location);
-            printFormat("Date of Event", venue.date);
-            console.log("-".repeat(70));            
+            let prepend = "-----  " + action + "  " + "-".repeat(70 - action.length - 9) + "\n";
+            writeFile("log.txt", prepend.concat("", output));
         });
 }
 
 function printFormat(message, data) {
-    var string = "";
+    let format = {
+        columnWidth: 20,
+        breakPoint: 40
+    };
+
+    let string = "";
     
     string += " ".repeat(2);
-    string += message + " ".repeat(27 - message.length);
+    string += message + " ".repeat(format.columnWidth - 2 - message.length);
 
-    if (data.length > 40) {
-        var words = data.split(" ");
-        var count = 0;
+    if (data.length > format.breakPoint) {
+        let words = data.split(" ");
+        let count = 0;
         
-        if (words[0].length > 40) {
+        if (words[0].length > format.breakPoint) {
             string += data;
         }
 
-        for (var i=1; i < words.length; i++ ) {
+        for (let i=1; i < words.length; i++ ) {
             string += words[i-1] + " ";
             count += words[i-1].length;
             count++;
 
-            if (count + words[i].length > 40) {
+            if (count + words[i].length > format.breakPoint) {
                 string += "\n";
                 count = 0;
-                string += " ".repeat(29);
+                string += " ".repeat(format.columnWidth);
             }
             
             if (i == words.length-1) {
-                if (count + words[i].length > 40) {
+                if (count + words[i].length > format.breakPoint) {
                     string += "\n";
-                    string += " ".repeat(29);
+                    string += " ".repeat(format.columnWidth);
                 }
                 string += words[i];
             }
@@ -165,25 +238,6 @@ function printFormat(message, data) {
         string += data;
     }
     
-    console.log (string);
+    //console.log (string);
+    return string;
 }
-
-
-querySpotify();
-queryOMDB();
-queryBIT();
-
-
-var command = process.argv[2];
-var instruction = process.argv[3];
-
-
-// liri commands
-// concert-this
-// spotify-this-song
-// movie-this
-// do-what-it-says
-
-
-// Improvements
-// - format output text for spacing alignment
