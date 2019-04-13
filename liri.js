@@ -59,18 +59,19 @@ function goLIRI (action, value) {
             break;
 
         case "-h":
-            console.log("\nSYNOPSIS\n     node liri.js [action] [value...]");
-            console.log("\nCOMMAND OPTIONS\r");
-            console.log("     -h                   Prints the usage for the liri.js executable");
-            console.log("     -w                   enables console output to file ./log.txt");
-            console.log("     concert-this         finds next venue for given band or artist");
-            console.log("     spotify-this-song    finds top query for given song name");
-            console.log("     movie-this           finds top query for given movie title");
-            console.log("     do-what-it-says      reads input command from ./random.txt");
+            console.log("\n\033[38;5;249mSYNOPSIS\033[0m\n     node liri.js [action] [value...]");
+            console.log("\n\033[38;5;249mCOMMAND OPTIONS\033[0m\r");
+            console.log("\033[38;5;81m" + "     -h                   " + "\033[0m" + "Prints the usage for the liri.js executable");
+            console.log("\033[38;5;81m" + "     -w                   " + "\033[0m" + "enables console output to file ./log.txt");
+            console.log("\033[38;5;204m" + "     concert-this        " + "\033[0m" + "finds next venue for given band or artist");
+            console.log("\033[38;5;204m" + "     spotify-this-song   " + "\033[0m" + "finds top query for given song name");
+            console.log("\033[38;5;204m" + "     movie-this          " + "\033[0m" + "finds top query for given movie title");
+            console.log("\033[38;5;204m" + "     do-what-it-says     " + "\033[0m" + "reads input command from ./random.txt");
             console.log("\r");
             break; 
         default:
-            console.log(action + ": command not found. Use -h for help\n");
+            console.log("\033[38;5;196m" + action + ": command not found. Use -h for help\n");
+            // [ANSI Escape Code]: https://en.wikipedia.org/wiki/ANSI_escape_code
     }
 }
 
