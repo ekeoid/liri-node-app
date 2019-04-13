@@ -1,28 +1,48 @@
 require("dotenv").config();
 
-var keys = require("./keys.js");
+const keys = require("./keys.js");
 
-var Spotify = require("node-spotify-api");
-var spotify = new Spotify(keys.spotify);
+const Spotify = require("node-spotify-api");
+const spotify = new Spotify(keys.spotify);
 
-var axios = require("axios");
+const axios = require("axios");
 
-var moment = require("moment");
+const moment = require("moment");
 
-var fs = require("fs");
+const fs = require("fs");
 
-var action = process.argv[2];
-var value = process.argv.slice(3).join("+");
+let writeToFile = false;
+let input = process.argv.slice(2).join(" ");
 
-// console.log(action);
-// console.log(value);
+input = processCommandInput(input);
+let action = input.slice(0, input.indexOf(" ") == -1 ? input.length : input.indexOf(" "));
+let value = input.indexOf(" ") == -1 ? null : input.slice(input.indexOf(" ") + 1);
+
+// console.log("Input: " + input);
+// console.log("Action: " + action);
+// console.log("Value: " + value);
 
 goLIRI (action, value);
 
+function processCommandInput(input) {
+    if (input.indexOf("-") != -1 && input.indexOf("-") == 0) {
+        let flag = input.slice(0,2);
+        if (flag ==  "-h") {
+            return "-h";
+        }
+
+        if (flag == "-w") {
+            writeToFile = true;
+            return input.slice(input.indexOf(" ") + 1);
+        }
+        
+    }
+    return input;
+}
 
 function goLIRI (action, value) {
     switch (action) {
-        case "concert-this":
+        case "concert-this":     
             queryBIT(value);
             break;
         
@@ -37,6 +57,20 @@ function goLIRI (action, value) {
         case "do-what-it-says":
             readFile("random.txt");
             break;
+
+        case "-h":
+            console.log("\nSYNOPSIS\n     node liri.js [action] [value...]");
+            console.log("\nCOMMAND OPTIONS\r");
+            console.log("     -h                   Prints the usage for the liri.js executable");
+            console.log("     -w                   enables console output to file ./log.txt");
+            console.log("     concert-this         finds next venue for given band or artist");
+            console.log("     spotify-this-song    finds top query for given song name");
+            console.log("     movie-this           finds top query for given movie title");
+            console.log("     do-what-it-says      reads input command from ./random.txt");
+            console.log("\r");
+            break; 
+        default:
+            console.log(action + ": command not found. Use -h for help\n");
     }
 }
 
@@ -57,14 +91,13 @@ function writeFile(filename, output) {
         if (err) {
           return console.log(err);
         }
-
-        console.log(output);
+        //console.log(output);
       });    
 }
 
 function querySpotify(string) {
     var trackName;
-    if (string === undefined || string === "") {
+    if (string === undefined || string === null || string === "") {
         // if no song, default to "The Sign" by Ace of Base.
         trackName = "Ace of Base The Sign";        
     } else {
@@ -84,6 +117,9 @@ function querySpotify(string) {
             let output = "";
             //console.log(response.tracks.items[0]);
             if (response.tracks.items.length > 0) {
+                
+                output = "-----  " + action + "  " + "-".repeat(70 - action.length - 9) + "\n";
+
                 for (let i = 0; i < results; i++) {
 
                     let track = {
@@ -100,10 +136,13 @@ function querySpotify(string) {
                     output += "-".repeat(70) + "\n";
                 }
                 
-                let prepend = "-----  " + action + "  " + "-".repeat(70 - action.length - 9) + "\n";
-                writeFile("log.txt", prepend.concat("", output));
+                if (writeToFile)
+                    writeFile("log.txt", output);
+
+                console.log(output);
+
             } else {
-                console.log ("No Results");
+                console.log ("\nNo Results");
             }
             
             
@@ -116,7 +155,7 @@ function querySpotify(string) {
 
 function queryOMDB(string) {
     var movieName;
-    if (string === undefined || string === "") {
+    if (string === undefined || string === null || string === "") {
         // if no movie, default to "Mr. Nobody"
         movieName = "Mr.+Nobody";        
     } else {
@@ -128,38 +167,46 @@ function queryOMDB(string) {
     axios.get(queryURL).then(
         function (response) {
             //console.log(response.data);
-            let movie = {
-                title: response.data.Title,
-                year: response.data.Year,
-                imdbRating: response.data.imdbRating,
-                rtRating: response.data.Ratings[1].Value,
-                country: response.data.Country,
-                language: response.data.Language,
-                plot: response.data.Plot,
-                actors: response.data.Actors
+            
+            if (response.data.Response == "True") {
+                let movie = {
+                    title: response.data.Title,
+                    year: response.data.Year,
+                    imdbRating: response.data.imdbRating,
+                    rtRating: response.data.Ratings.length > 1 ? response.data.Ratings[1].Value : "Not Available",
+                    country: response.data.Country,
+                    language: response.data.Language,
+                    plot: response.data.Plot,
+                    actors: response.data.Actors
+                }
+
+                let output = "";
+                output = "-----  " + action + "  " + "-".repeat(70 - action.length - 9) + "\n";
+
+                output += printFormat("Movie Name", movie.title) + "\n";
+                output += printFormat("Release Year", movie.year) + "\n";
+                output += printFormat("IMDB Rating", movie.imdbRating) + "\n";
+                output += printFormat("Rotten Tomatoes Rating", movie.rtRating) + "\n";
+                output += printFormat("Country", movie.country) + "\n";
+                output += printFormat("Language(s)", movie.language) + "\n";
+                output += printFormat("Plot", movie.plot) + "\n";
+                output += printFormat("Actors", movie.actors) + "\n";
+                output += "-".repeat(70) + "\n";
+
+                if (writeToFile)
+                        writeFile("log.txt", output);
+
+                console.log(output);
+            } else {
+                console.log ("\nNo Results");
             }
-
-            let output = "";
-
-            output += printFormat("Movie Name", movie.title) + "\n";
-            output += printFormat("Release Year", movie.year) + "\n";
-            output += printFormat("IMDB Rating", movie.imdbRating) + "\n";
-            output += printFormat("Rotten Tomatoes Rating", movie.rtRating) + "\n";
-            output += printFormat("Country", movie.country) + "\n";
-            output += printFormat("Language(s)", movie.language) + "\n";
-            output += printFormat("Plot", movie.plot) + "\n";
-            output += printFormat("Actors", movie.actors) + "\n";
-            output += "-".repeat(70) + "\n";
-
-            let prepend = "-----  " + action + "  " + "-".repeat(70 - action.length - 9) + "\n";
-            writeFile("log.txt", prepend.concat("", output));
 
         });
 }
 
 function queryBIT(string) {
     var artistName;
-    if (string === undefined || string === "") {
+    if (string === undefined || string === null || string === "") {
         artistName = "Imagine+Dragons";       
     } else {
         artistName = string;
@@ -169,35 +216,43 @@ function queryBIT(string) {
 
     axios.get(queryURL).then(
         function (response) {
-
+            // console.log(response);
             //let results = response.data.length;
             let results = 1;
             let output = "";
 
-            for (let i = 0; i < results; i++) {
+            if (response.data.indexOf("Not found") == -1) {
+                output = "-----  " + action + "  " + "-".repeat(70 - action.length - 9) + "\n";
+                for (let i = 0; i < results; i++) {
 
-                let venue = {
-                    name: response.data[i].venue.name,
-                    location: response.data[i].venue.city + ", " +
-                        response.data[i].venue.region + ", " +
-                        response.data[i].venue.country,
-                    //date: response.data[0].datetime
-                    date: moment(response.data[i].datetime, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY")
+                    let venue = {
+                        name: response.data[i].venue.name,
+                        location: response.data[i].venue.city + ", " +
+                            response.data[i].venue.region + ", " +
+                            response.data[i].venue.country,
+                        //date: response.data[0].datetime
+                        date: moment(response.data[i].datetime, "YYYY-MM-DD HH:mm:ss").format("MM/DD/YYYY")
+                    }
+
+                    output += printFormat("Venue Name", venue.name) + "\n";
+                    output += printFormat("Location", venue.location) + "\n";
+                    output += printFormat("Date of Event", venue.date) + "\n";
+                    output += "-".repeat(70) + "\n";
                 }
+                
+                if (writeToFile)
+                        writeFile("log.txt", output);
 
-                output += printFormat("Venue Name", venue.name) + "\n";
-                output += printFormat("Location", venue.location) + "\n";
-                output += printFormat("Date of Event", venue.date) + "\n";
-                output += "-".repeat(70) + "\n";
+                console.log(output);
+            } else {
+                console.log ("\nNo Results");
             }
-            let prepend = "-----  " + action + "  " + "-".repeat(70 - action.length - 9) + "\n";
-            writeFile("log.txt", prepend.concat("", output));
         });
 }
 
 function printFormat(message, data) {
     let format = {
-        columnWidth: 20,
+        columnWidth: 29,
         breakPoint: 40
     };
 

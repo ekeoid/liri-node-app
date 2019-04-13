@@ -1,6 +1,37 @@
 -----  concert-this  -------------------------------------------------
-  Venue Name        Coachella Valley Music and Arts Festival
-  Location          Indio, CA, United States
-  Date of Event     04/14/2019
+  Venue Name                 Coachella Valley Music and Arts Festival
+  Location                   Indio, CA, United States
+  Date of Event              04/14/2019
 ----------------------------------------------------------------------
-
+-----  spotify-this-song  --------------------------------------------
+  Artist                     Ariana Grande
+  Song                       One Last Time
+  Preview                    
+  Album                      My Everything (Deluxe)
+----------------------------------------------------------------------
+-----  movie-this  ---------------------------------------------------
+  Movie Name                 Hairspray Live!
+  Release Year               2016
+  IMDB Rating                7.0
+  Rotten Tomatoes Rating     76%
+  Country                    USA
+  Language(s)                English
+  Plot                       A teenage girl living in Baltimore in 
+                             the early 1960s dreams of appearing on a 
+                             popular TV dance show.
+  Actors                     Kristin Chenoweth, Dove Cameron, Shahadi 
+                             Wright Joseph, Ariana Grande
+----------------------------------------------------------------------
+-----  movie-this  ---------------------------------------------------
+  Movie Name                 Hairspray Live!
+  Release Year               2016
+  IMDB Rating                7.0
+  Rotten Tomatoes Rating     76%
+  Country                    USA
+  Language(s)                English
+  Plot                       A teenage girl living in Baltimore in 
+                             the early 1960s dreams of appearing on a 
+                             popular TV dance show.
+  Actors                     Kristin Chenoweth, Dove Cameron, Shahadi 
+                             Wright Joseph, Ariana Grande
+----------------------------------------------------------------------
