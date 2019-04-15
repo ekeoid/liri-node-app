@@ -1,8 +1,7 @@
 # liri-node-app
 
 
-
-![liri help](<img src="/readme/help.png" width="200" height="400" />)
+![test image size]("/readme/help.png"){:height="700px" width="400px"}
 
 ![liri help](/readme/help.png | width=250)
 
