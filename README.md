@@ -1,7 +1,7 @@
 # liri-node-app
 
 
-![liri help](/readme/help.png =250x400)
+![liri help](/readme/help.png | width=250)
 
 ![liri no command](/readme/no-command.png)
 
