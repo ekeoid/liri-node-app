@@ -2,7 +2,7 @@
 
 
 
-![liri help](/readme/help.png)
+![liri help](/readme/help.png "help")
 
 ![liri no command](/readme/no-command.png)
 
