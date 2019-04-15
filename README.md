@@ -16,3 +16,17 @@
 
 ![liri spotify3](/readme/spotify-this-song-log.png)
 
+
+![liri concert1](/readme/concert-this-novalue.png)
+
+![liri concert2](/readme/concert-this.png)
+
+![liri concert3](/readme/concert-this-log.png)
+
+
+![liri movie1](/readme/movie-this-novalue.png)
+
+![liri movie2](/readme/movie-this.png)
+
+![liri movie3](/readme/movie-this-log.png)
+
